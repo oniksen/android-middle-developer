@@ -2,19 +2,13 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id "jacoco" // ← ДОБАВИЛИ
     id "org.sonarqube" version "7.0.1.6134"
 }
-sonar {
-  properties {
-    property "sonar.projectKey", "oniksen_android-middle-developer"
-    property "sonar.organization", "oniksen"
-  }
-}
+
 android {
     namespace = "dev.oniksen.android_middle_developer"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "dev.oniksen.android_middle_developer"
@@ -22,11 +16,13 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
+        debug {
+            testCoverageEnabled = true  // ← ВКЛЮЧИЛИ JaCoCo
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -35,15 +31,24 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
+
     buildFeatures {
         compose = true
+    }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true  // ← для Robolectric / ресурсов
+        }
     }
 }
 
@@ -56,6 +61,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -63,4 +69,18 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+}
+
+// === JACOCO + SONAR (минимально) ===
+tasks.named("testDebugUnitTest") {
+    finalizedBy(tasks.named("jacocoTestReport"))
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "oniksen_android-middle-developer"
+        property "sonar.organization", "oniksen"
+        property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
+    }
 }
