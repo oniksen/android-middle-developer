@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("jacoco") // ← Kotlin DSL
+    id("jacoco")
     id("org.sonarqube") version "7.0.1.6134"
 }
 
@@ -21,7 +21,7 @@ android {
 
     buildTypes {
         debug {
-            isTestCoverageEnabled = true // ← JaCoCo включён
+            isTestCoverageEnabled = true
         }
         release {
             isMinifyEnabled = false
@@ -45,9 +45,11 @@ android {
         compose = true
     }
 
+    // ← ВКЛЮЧАЕМ UNIT-ТЕСТЫ
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
+            isReturnDefaultValues = true
         }
     }
 }
@@ -71,9 +73,9 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
 
-// === JACOCO + SONAR (Kotlin DSL) ===
-tasks.named<Test>("testDebugUnitTest") {
-    finalizedBy(tasks.named<JacocoReport>("jacocoTestReport"))
+// === JACOCO + SONAR ===
+tasks.withType<Test>().configureEach {
+    finalizedBy("jacocoTestReport")
 }
 
 sonarqube {
