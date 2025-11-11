@@ -2,8 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id "jacoco" // ← ДОБАВИЛИ
-    id "org.sonarqube" version "7.0.1.6134"
+    id("jacoco") // ← Kotlin DSL
+    id("org.sonarqube") version "7.0.1.6134"
 }
 
 android {
@@ -21,7 +21,7 @@ android {
 
     buildTypes {
         debug {
-            testCoverageEnabled = true  // ← ВКЛЮЧИЛИ JaCoCo
+            isTestCoverageEnabled = true // ← JaCoCo включён
         }
         release {
             isMinifyEnabled = false
@@ -47,7 +47,7 @@ android {
 
     testOptions {
         unitTests {
-            includeAndroidResources = true  // ← для Robolectric / ресурсов
+            isIncludeAndroidResources = true
         }
     }
 }
@@ -71,16 +71,16 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
 
-// === JACOCO + SONAR (минимально) ===
-tasks.named("testDebugUnitTest") {
-    finalizedBy(tasks.named("jacocoTestReport"))
+// === JACOCO + SONAR (Kotlin DSL) ===
+tasks.named<Test>("testDebugUnitTest") {
+    finalizedBy(tasks.named<JacocoReport>("jacocoTestReport"))
 }
 
 sonarqube {
     properties {
-        property "sonar.projectKey", "oniksen_android-middle-developer"
-        property "sonar.organization", "oniksen"
-        property "sonar.host.url", "https://sonarcloud.io"
-        property "sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
+        property("sonar.projectKey", "oniksen_android-middle-developer")
+        property("sonar.organization", "oniksen")
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.coverage.jacoco.xmlReportPaths", "${layout.buildDirectory.get()}/reports/jacoco/test/jacocoTestReport.xml")
     }
 }
