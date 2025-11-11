@@ -2,8 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("jacoco")
     id("org.sonarqube") version "7.0.1.6134"
+    // ← УБРАЛИ id("jacoco") — НЕ НУЖНО
 }
 
 android {
@@ -21,7 +21,7 @@ android {
 
     buildTypes {
         debug {
-            isTestCoverageEnabled = true
+            isTestCoverageEnabled = true  // ← ВАЖНО: включает сбор покрытия
         }
         release {
             isMinifyEnabled = false
@@ -45,7 +45,6 @@ android {
         compose = true
     }
 
-    // ← ВКЛЮЧАЕМ UNIT-ТЕСТЫ
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
@@ -73,16 +72,13 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
 
-// === JACOCO + SONAR ===
-tasks.withType<Test>().configureEach {
-    finalizedBy("jacocoTestReport")
-}
-
+// === SONARQUBE (достаточно) ===
 sonarqube {
     properties {
         property("sonar.projectKey", "oniksen_android-middle-developer")
         property("sonar.organization", "oniksen")
         property("sonar.host.url", "https://sonarcloud.io")
+        // Sonar сам найдёт .exec файлы от AGP
         property("sonar.coverage.jacoco.xmlReportPaths", "${layout.buildDirectory.get()}/reports/jacoco/test/jacocoTestReport.xml")
     }
 }
