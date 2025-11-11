@@ -2,8 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("org.sonarqube") version "7.0.1.6134"
-    // ← УБРАЛИ id("jacoco") — НЕ НУЖНО
+    id("org.sonarqube") version "4.4.1.3373"  // ← ПОНИЗИЛИ ДО СТАБИЛЬНОЙ
 }
 
 android {
@@ -21,7 +20,7 @@ android {
 
     buildTypes {
         debug {
-            isTestCoverageEnabled = true  // ← ВАЖНО: включает сбор покрытия
+            isTestCoverageEnabled = true
         }
         release {
             isMinifyEnabled = false
@@ -72,13 +71,12 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
 
-// === SONARQUBE (достаточно) ===
+// === SONARQUBE ===
 sonarqube {
     properties {
         property("sonar.projectKey", "oniksen_android-middle-developer")
         property("sonar.organization", "oniksen")
         property("sonar.host.url", "https://sonarcloud.io")
-        // Sonar сам найдёт .exec файлы от AGP
         property("sonar.coverage.jacoco.xmlReportPaths", "${layout.buildDirectory.get()}/reports/jacoco/test/jacocoTestReport.xml")
     }
 }
