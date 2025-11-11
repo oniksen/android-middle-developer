@@ -38,7 +38,7 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-      - name: Run tests + JaCoCo + Sonar
+      - name: Run unit tests + Sonar
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew testDebugUnitTest jacocoTestReport sonar --info
+        run: ./gradlew testDebugUnitTest sonar --info
