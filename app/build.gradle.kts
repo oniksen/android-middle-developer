@@ -2,8 +2,14 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id "org.sonarqube" version "7.0.1.6134"
 }
-
+sonar {
+  properties {
+    property "sonar.projectKey", "oniksen_android-middle-developer"
+    property "sonar.organization", "oniksen"
+  }
+}
 android {
     namespace = "dev.oniksen.android_middle_developer"
     compileSdk {
